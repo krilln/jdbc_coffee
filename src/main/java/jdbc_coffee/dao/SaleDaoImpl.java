@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jdbc_coffee.ConnectionProvide;
+import jdbc_coffee.dto.Product;
 import jdbc_coffee.dto.Sale;
 
 
@@ -40,7 +41,7 @@ public class SaleDaoImpl implements SaleDao {
 
 	private Sale getSale(ResultSet rs) throws SQLException {
 		int no = rs.getInt("no");
-		String code = rs.getString("code");
+		Product code = new Product(rs.getString("code"));
 		int price = rs.getInt("price");
 		int saleCnt = rs.getInt("saleCnt");
 		int marginRate = rs.getInt("marginRate");
@@ -55,7 +56,7 @@ public class SaleDaoImpl implements SaleDao {
 		try (Connection conn = ConnectionProvide.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);) {
 			pstmt.setInt(1, Sale.getNo());
-			pstmt.setString(2, Sale.getCode());
+			pstmt.setString(2, Sale.getCode().getCode());
 			pstmt.setInt(3, Sale.getPrice());
 			pstmt.setInt(4, Sale.getSaleCnt());
 			pstmt.setInt(5, Sale.getMarginRate());
@@ -73,7 +74,7 @@ public class SaleDaoImpl implements SaleDao {
 		int res = 0;
 		try (Connection conn = ConnectionProvide.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);) {
-			pstmt.setString(1, Sale.getCode());
+			pstmt.setString(1, Sale.getCode().getCode());
 			LOG.debug(pstmt);
 			res = pstmt.executeUpdate();
 		}
@@ -90,7 +91,7 @@ public class SaleDaoImpl implements SaleDao {
 			pstmt.setInt(2, Sale.getPrice());
 			pstmt.setInt(3, Sale.getSaleCnt());
 			pstmt.setInt(4, Sale.getMarginRate());
-			pstmt.setString(5, Sale.getCode());
+			pstmt.setString(5, Sale.getCode().getCode());
 			LOG.debug(pstmt);
 			res = pstmt.executeUpdate();
 		}
@@ -104,7 +105,7 @@ public class SaleDaoImpl implements SaleDao {
 
 		try (Connection conn = ConnectionProvide.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, Sale.getCode());
+			pstmt.setString(1, Sale.getCode().getCode());
 			LOG.debug(pstmt);
 
 			try (ResultSet rs = pstmt.executeQuery();) {

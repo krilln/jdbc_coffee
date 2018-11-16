@@ -2,18 +2,25 @@ package jdbc_coffee.ui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
+import jdbc_coffee.dto.Product;
+import jdbc_coffee.dto.Sale;
+import jdbc_coffee.service.SaleInputService;
+
 
 public class coffeeManagementUi extends JFrame implements ActionListener {
 
@@ -26,6 +33,7 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 	private JButton btnInsert;
 	private JButton btnPrint1;
 	private JButton btnPrint2;
+	private SaleInputService service;
 
 	/**
 	 * Launch the application.
@@ -47,6 +55,7 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public coffeeManagementUi() {
+		service = new SaleInputService();
 		initComponents();
 	}
 	private void initComponents() {
@@ -130,6 +139,7 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 		btnPrint2.addActionListener(this);
 		pbtnWrap.add(btnPrint2);
 	}
+	
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnPrint2) {
@@ -143,8 +153,40 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 		}
 	}
 	protected void do_btnInsert_actionPerformed(ActionEvent e) {
+		Sale sale = getSale();
+		int res = 0;
+		System.out.println(service);
+		try {
+			res = service.registerSale(sale);
+			/*service.searchProduct(sale);*/
+			if(res == 1) {
+				JOptionPane.showMessageDialog(null, "추가");
+			}
+			clearTf();
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "잘 생각해보세요");
+			e1.printStackTrace();
+		}
 		
 	}
+	private Sale getSale() {
+		String code = tfCode.getText().trim();
+		int price = Integer.parseInt(tfPrice.getText().trim());
+		int saleCnt = Integer.parseInt(tfCnt.getText().trim());
+		int marginRate = Integer.parseInt(tfMarginRate.getText().trim());
+		return new Sale(0, new Product(code), price, saleCnt, marginRate);
+	}
+
+	private void clearTf() {
+		tfCode.setText("");
+		tfName.setText("");
+		tfPrice.setText("");
+		tfCnt.setText("");
+		tfMarginRate.setText("");
+		
+	}
+	
+
 	protected void do_btnPrint1_actionPerformed(ActionEvent e) {
 		
 	}

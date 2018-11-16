@@ -13,6 +13,7 @@ import org.junit.runners.MethodSorters;
 
 import jdbc_coffee.dao.SaleDao;
 import jdbc_coffee.dao.SaleDaoImpl;
+import jdbc_coffee.dto.Product;
 import jdbc_coffee.dto.Sale;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -48,7 +49,7 @@ public class SaleDaoTest {
    @Test
    public void test02InsertSale() {
       try {
-         Sale newSale = new Sale(5, "A003", 5000, 155, 20);
+         Sale newSale = new Sale(5, new Product("A003"), 5000, 155, 20);
          int rowAffected = dao.insertSale(newSale);
          LogUtil.prnLog(String.format("rowAffected %d", rowAffected));
          Assert.assertEquals(1, rowAffected);
@@ -65,7 +66,7 @@ public class SaleDaoTest {
    public void test05DeleteSale() {
       try {
          Sale delSale = new Sale();
-         delSale.setCode("A003");
+         delSale.setCode(new Product("A003"));
          int rowAffected = dao.deleteSale(delSale);
          LogUtil.prnLog(String.format("rowAffected %d", rowAffected));
          Assert.assertEquals(1, rowAffected);
@@ -81,7 +82,7 @@ public class SaleDaoTest {
    @Test
    public void test03UpdateSale() {
       try {
-         Sale updateSale = new Sale(6, "A003", 200, 25, 5800);
+         Sale updateSale = new Sale(6, new Product("A003"), 200, 25, 5800);
          int rowAffected = dao.updateSale(updateSale);
          LogUtil.prnLog(String.format("rowAffected %d", rowAffected));
          Assert.assertEquals(1, rowAffected);
@@ -94,7 +95,7 @@ public class SaleDaoTest {
    public void test04SelectSaleByNo() {
       try {
          Sale selSale = new Sale();
-         selSale.setCode("A003");
+         selSale.setCode(new Product("A003"));
          Sale Sale = dao.selectSaleByNo(selSale);
          LogUtil.prnLog(String.format("%s - %s", Sale.getClass().getSimpleName(), Sale));
          Assert.assertNotNull(Sale);
