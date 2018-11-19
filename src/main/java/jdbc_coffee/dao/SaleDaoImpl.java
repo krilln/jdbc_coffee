@@ -1,5 +1,6 @@
 package jdbc_coffee.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,8 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jdbc_coffee.ConnectionProvide;
+import jdbc_coffee.LogUtil;
 import jdbc_coffee.dto.Product;
 import jdbc_coffee.dto.Sale;
+import jdbc_coffee.dto.SaleDetail;
 
 
 
@@ -118,4 +121,51 @@ public class SaleDaoImpl implements SaleDao {
 		return selSale; 
 	}
 
+	/*@Override
+	public List<Sale> saleRankList() {
+		// TODO Auto-generated method stub
+		return null;
+	}*/
+
+	@Override
+	public List<Sale> selectSaleRank(boolean isSale) throws SQLException {
+		
+		LogUtil.prnLog("selectSaleRank");
+		List<Sale> list = new ArrayList<>();
+		String sql = "{call rank_salePrice(?)}";
+		try(Connection conn = ConnectionProvide.getConnection();
+				CallableStatement cs = conn.prepareCall(sql);){
+			cs.setBoolean(1, isSale);
+			LogUtil.prnLog(cs.toString());
+			try(ResultSet rs = cs.executeQuery()){
+				while(rs.next()) {
+					list.add(getSaleDetail(rs));
+				}
+				
+			}
+
+		}
+		LogUtil.prnLog("selectSaleRank" + list.size());
+		return list;
+
 }
+
+	private Sale getSaleDetail(ResultSet rs) throws SQLException {
+		int no = rs.getInt("no");
+//		String code = rs.getString("code");
+		Product product = new Product(rs.getString("code"), rs.getString("name"));
+		int price = rs.getInt("price");
+		int saleCnt = rs.getInt("saleCnt");
+		int marginRate = rs.getInt("marginRate");
+		int supplyprice = rs.getInt("supply");
+		int addtax = rs.getInt("addtax");
+		int saleprice = rs.getInt("saleprice");
+		int marginprice = rs.getInt("marginprice");
+		int rank = rs.getInt("순위");
+		
+		SaleDetail detail = new SaleDetail(supplyprice, addtax, saleprice, marginprice, rank);
+		Sale sale = new Sale(no, product, price, saleCnt, marginRate, detail);
+		LogUtil.prnLog(sale.toString());
+		return sale;
+	}
+	}

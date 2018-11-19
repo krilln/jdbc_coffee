@@ -12,4 +12,6 @@ public interface SaleDao {
 	int deleteSale(Sale Sale) throws SQLException;
 	int updateSale(Sale Sale) throws SQLException;
 	Sale selectSaleByNo(Sale Sale) throws SQLException;
+	/*List<Sale> saleRankList();*/
+	List<Sale> selectSaleRank(boolean isSale) throws SQLException;
 }

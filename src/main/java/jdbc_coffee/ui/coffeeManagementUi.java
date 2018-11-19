@@ -19,6 +19,8 @@ import javax.swing.border.EmptyBorder;
 
 import jdbc_coffee.dto.Product;
 import jdbc_coffee.dto.Sale;
+import jdbc_coffee.service.MyDocumentListener;
+import jdbc_coffee.service.OutputService;
 import jdbc_coffee.service.SaleInputService;
 
 
@@ -34,6 +36,7 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 	private JButton btnPrint1;
 	private JButton btnPrint2;
 	private SaleInputService service;
+	private OutputService productService;
 
 	/**
 	 * Launch the application.
@@ -56,6 +59,7 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 	 */
 	public coffeeManagementUi() {
 		service = new SaleInputService();
+		productService = new OutputService();
 		initComponents();
 	}
 	private void initComponents() {
@@ -83,6 +87,8 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 		pContent.add(lblName);
 		
 		tfName = new JTextField();
+		tfName.setHorizontalAlignment(SwingConstants.CENTER);
+		tfName.setEditable(false);
 		pContent.add(tfName);
 		tfName.setColumns(10);
 		
@@ -138,6 +144,26 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 		btnPrint2 = new JButton("출력2");
 		btnPrint2.addActionListener(this);
 		pbtnWrap.add(btnPrint2);
+		
+		tfCode.getDocument().addDocumentListener(new MyDocumentListener() {
+			
+			@Override
+			public void msg() {
+				if(tfCode.getText().length() == 4) {
+					Product pdt = new Product(tfCode.getText().trim());
+					try {
+						Product searchPdt = service.searchProduct(pdt);
+						System.out.println(searchPdt);
+						tfName.setText(searchPdt.getName());
+					}catch (SQLException e){
+						e.printStackTrace();
+					}catch (NullPointerException e) {
+						tfName.setText("없는 제품입니다.");
+					}
+				}
+				
+			}
+		});
 	}
 	
 
@@ -188,9 +214,11 @@ public class coffeeManagementUi extends JFrame implements ActionListener {
 	
 
 	protected void do_btnPrint1_actionPerformed(ActionEvent e) {
-		
+		OutputUI ui = new OutputUI(false);
+		ui.setVisible(true);
 	}
 	protected void do_btnPrint2_actionPerformed(ActionEvent e) {
-		
+		OutputUI ui = new OutputUI(true);
+		ui.setVisible(true);
 	}
 }
